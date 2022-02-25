@@ -60,4 +60,4 @@ class Reserva(models.Model):
     estado = models.CharField(max_length=100,choices=ESTADO_CHOICES)
     
     def __str__(self):
-        return self.fechaInicio
+        return self.habitacion.numero
