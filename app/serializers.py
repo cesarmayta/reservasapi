@@ -27,9 +27,13 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
         token = super(MyTokenObtainPairSerializer, cls).get_token(user)
+        
+        clienteToken = Cliente.objects.get(usuario=user)
+        
 
         # Add custom claims
         token['username'] = user.username
+        token['clienteid'] = clienteToken.pk
         return token
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -37,13 +41,17 @@ class RegisterSerializer(serializers.ModelSerializer):
             required=True,
             validators=[UniqueValidator(queryset=User.objects.all())]
             )
+    
+    cedula =serializers.CharField(required=True)
+    nro_pasaporte =serializers.CharField()
+    celular =serializers.CharField(required=True)
 
     password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
     password2 = serializers.CharField(write_only=True, required=True)
 
     class Meta:
         model = User
-        fields = ('username', 'password', 'password2', 'email', 'first_name', 'last_name')
+        fields = ('username', 'password', 'password2', 'email', 'first_name', 'last_name','cedula','nro_pasaporte','celular')
         extra_kwargs = {
             'first_name': {'required': True},
             'last_name': {'required': True}
@@ -51,7 +59,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         if attrs['password'] != attrs['password2']:
-            raise serializers.ValidationError({"password": "Password fields didn't match."})
+            raise serializers.ValidationError({"password": "los passwords no coinciden"})
 
         return attrs
 
@@ -66,5 +74,16 @@ class RegisterSerializer(serializers.ModelSerializer):
         
         user.set_password(validated_data['password'])
         user.save()
+        #registramos el cliente
+        cliente = Cliente.objects.create(
+            usuario = user,
+            cedula = validated_data['cedula'],
+            nro_pasaporte = validated_data['nro_pasaporte'],
+            celular = validated_data['celular']
+        )
+        
+        dictClienteReturn = {
+            'cliente_id':cliente.id
+        }
 
-        return user
+        return dictClienteReturn

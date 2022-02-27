@@ -26,11 +26,19 @@ class MyObtainTokenPairView(TokenObtainPairView):
     permission_classes = (AllowAny,)
     serializer_class = MyTokenObtainPairSerializer
     
-class RegisterView(generics.CreateAPIView):
-    queryset = User.objects.all()
-    permission_classes = (AllowAny,)
-    serializer_class = RegisterSerializer
+class RegistroView(APIView):
 
+    def post(self,request):
+        ClienteSer = RegisterSerializer(data=request.data)
+        ClienteSer.is_valid(raise_exception=True)
+        ClienteSer.save()
+        
+        context = {
+            'ok':True,
+            'content':'cliente registrado'
+        }
+        return Response(context)
+    
 ################ ENDPOINTS HABTACION ###################################
 class HabitacionView(APIView):
     
@@ -93,7 +101,7 @@ class HabitacionDetailView(APIView):
 ################ ENDPOINTS CLIENTE ###################################
 class ClienteView(APIView):
     
-    #permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     
     def get(self,request):
         ClienteData = Cliente.objects.all()
@@ -105,19 +113,19 @@ class ClienteView(APIView):
         return Response(context)
     
     def post(self,request):
-        ClienteSer = ClienteSerializer(data=request.data)
+        ClienteSer = RegisterSerializer(data=request.data)
         ClienteSer.is_valid(raise_exception=True)
         ClienteSer.save()
         
         context = {
             'ok':True,
-            'content':ClienteSer.data
+            'content':'cliente registrado'
         }
         return Response(context)
     
 class ClienteDetailView(APIView):
     
-    #permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     
     def get(self,request,cliente_id):
         ClienteData = Cliente.objects.get(pk=cliente_id)
@@ -152,7 +160,7 @@ class ClienteDetailView(APIView):
 ################ ENDPOINTS RESERVAS ###################################
 class ReservaView(APIView):
     
-    #permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     
     def get(self,request):
         ReservaData = Reserva.objects.all()
@@ -176,7 +184,7 @@ class ReservaView(APIView):
     
 class ReservaDetailView(APIView):
     
-    #permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     
     def get(self,request,reserva_id):
         ReservaData = Reserva.objects.get(pk=reserva_id)

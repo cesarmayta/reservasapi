@@ -15,5 +15,5 @@ urlpatterns = [
     path('reserva/<int:reserva_id>',views.ReservaDetailView.as_view(),name='reserva'),
     path('login/', views.MyObtainTokenPairView.as_view(), name='token_obtain_pair'),
     path('login/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('register/', views.RegisterView.as_view(), name='auth_register'),
+    path('registro/', views.RegistroView.as_view(), name='registro'),
 ]
