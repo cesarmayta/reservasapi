@@ -1,10 +1,16 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework import generics
 
 from .models import *
 from .serializers import *
 
 from django.contrib.auth.models import User
+
+### para jwt
+from rest_framework.permissions import AllowAny,IsAuthenticated
+from rest_framework_simplejwt.views import TokenObtainPairView
+
 
 class indexView(APIView):
     
@@ -15,10 +21,20 @@ class indexView(APIView):
         }
         return Response(context)
 
+################ ENDPOINTS PARA AUTENTICACIÓN #########################
+class MyObtainTokenPairView(TokenObtainPairView):
+    permission_classes = (AllowAny,)
+    serializer_class = MyTokenObtainPairSerializer
+    
+class RegisterView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    permission_classes = (AllowAny,)
+    serializer_class = RegisterSerializer
+
 ################ ENDPOINTS HABTACION ###################################
 class HabitacionView(APIView):
     
-    #permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     
     def get(self,request):
         HabitacionData = Habitacion.objects.all()
@@ -42,7 +58,7 @@ class HabitacionView(APIView):
     
 class HabitacionDetailView(APIView):
     
-    #permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     
     def get(self,request,habitacion_id):
         HabitacionData = Habitacion.objects.get(pk=habitacion_id)
