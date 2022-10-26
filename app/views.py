@@ -42,7 +42,7 @@ class RegistroView(APIView):
 ################ ENDPOINTS HABTACION ###################################
 class HabitacionView(APIView):
     
-    permission_classes = [IsAuthenticated]
+    #permission_classes = [IsAuthenticated]
     
     def get(self,request):
         HabitacionData = Habitacion.objects.all()
