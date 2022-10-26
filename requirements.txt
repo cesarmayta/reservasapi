@@ -1,4 +1,5 @@
-django
+django==3.2
 djangorestframework
 djangorestframework-simplejwt
 gunicorn
+whitenoise==6.2.0
